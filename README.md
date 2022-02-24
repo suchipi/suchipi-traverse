@@ -1,8 +1,6 @@
 # `@suchipi/traverse`
 
-Basic depth-first traverse function for iterating over objects/arrays/etc.
-
-"Depth-first" means that the leaf nodes will be processed before their parent nodes; as such, the root node will be processed last.
+Basic traverse function for deeply iterating over objects/arrays/etc.
 
 ## Features
 
@@ -13,7 +11,7 @@ Basic depth-first traverse function for iterating over objects/arrays/etc.
 ## Usage
 
 ```js
-import traverse from "@suchipi/traverse";
+import { traverse } from "@suchipi/traverse";
 
 // It can traverse any JSON-compatible structure.
 const tree = {
@@ -28,10 +26,13 @@ const tree = {
   },
 };
 
-traverse(tree, (value, path) => {
-  console.log(`At '.${path.join(".")}':`, value);
+traverse(tree, {
+  // If you provide an `after` callback, it will be called on the way *up*
+  // the traversal stack; this is equivalent to a depth-first search.
+  after: (value, path) => {
+    console.log(`At '.${path.join(".")}':`, value);
+  },
 });
-
 // Output:
 //
 // At '.type': 'Root'
@@ -52,18 +53,54 @@ traverse(tree, (value, path) => {
 //   left: { type: 'Left', children: [ 1, 2, 3 ] },
 //   right: { type: 'Right', children: [ 4, 5, 6 ] }
 // }
+
+traverse(tree, {
+  // If you provide a `before` callback, it will be called on the way *down*
+  // the traversal stack; this is equivalent to a breadth-first search.
+  before: (value, path) => {
+    console.log(`At '.${path.join(".")}':`, value);
+  },
+});
+// Output:
+//
+// At '.': {
+//   type: 'Root',
+//   left: { type: 'Left', children: [ 1, 2, 3 ] },
+//   right: { type: 'Right', children: [ 4, 5, 6 ] }
+// }
+// At '.type': Root
+// At '.left': { type: 'Left', children: [ 1, 2, 3 ] }
+// At '.left.type': Left
+// At '.left.children': [ 1, 2, 3 ]
+// At '.left.children.0': 1
+// At '.left.children.1': 2
+// At '.left.children.2': 3
+// At '.right': { type: 'Right', children: [ 4, 5, 6 ] }
+// At '.right.type': Right
+// At '.right.children': [ 4, 5, 6 ]
+// At '.right.children.0': 4
+// At '.right.children.1': 5
+// At '.right.children.2': 6
 ```
 
 ## API
 
+This module has two named exports:
+
+- A function named `traverse`
+- A Symbol named `stop`
+
 ### `traverse`
 
-This module exports a single function, named `traverse`. Its type signature is as follows:
+The `traverse` function has the following type signature:
 
 ```ts
 function traverse(
   tree: any,
-  callback: (value: any, path: Array<string | number>) => void
+  callbacks?: {
+    before?: (value: any, path: Array<string | number>) => void | typeof stop;
+    after?: (value: any, path: Array<string | number>) => void;
+  }
 ): void;
 ```
 
@@ -73,6 +110,10 @@ When `callback` is called, it will be called with two arguments:
 
 - The value of the current descendant (could be an object, an array, a string, a number, etc)
 - The path from the initially-passed `tree` object to this descendant (an array of strings or numbers)
+
+### `stop`
+
+You can return `stop` from a `before` callback passed into `traverse` to stop traversing downwards beyond the current object's children.
 
 ## Tips
 

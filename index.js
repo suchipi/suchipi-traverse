@@ -1,24 +1,32 @@
-function doTraverse(obj, callback, path) {
+const stop = Symbol("stop");
+
+function doTraverse(obj, beforeCallback, afterCallback, path) {
+  const result = beforeCallback(obj, path);
+  if (result === stop) {
+    return;
+  }
+
   if (Array.isArray(obj)) {
     const children = Array.from(obj);
     for (let i = 0; i < children.length; i++) {
       const child = children[i];
-      doTraverse(child, callback, path.concat(i));
+      doTraverse(child, beforeCallback, afterCallback, path.concat(i));
     }
-    callback(obj, path);
   } else if (typeof obj === "object" && obj != null) {
     const entries = Object.entries(obj);
     for (const [key, value] of entries) {
-      doTraverse(value, callback, path.concat(key));
+      doTraverse(value, beforeCallback, afterCallback, path.concat(key));
     }
-    callback(obj, path);
-  } else {
-    callback(obj, path);
   }
+
+  afterCallback(obj, path);
 }
 
-function traverse(obj, callback) {
-  doTraverse(obj, callback, []);
+function traverse(obj, { before = () => {}, after = () => {} } = {}) {
+  doTraverse(obj, before, after, []);
 }
+
+traverse.stop = stop;
+traverse.traverse = traverse;
 
 module.exports = traverse;
