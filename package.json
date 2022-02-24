@@ -1,0 +1,24 @@
+{
+  "name": "@suchipi/traverse",
+  "version": "1.0.0",
+  "description": "Basic depth-first traversal function",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "keywords": [
+    "traverse",
+    "tree",
+    "leaf",
+    "node",
+    "depth",
+    "traversal",
+    "iterate",
+    "all"
+  ],
+  "author": "Lily Scott <me@suchipi.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^8.8.0",
+    "eslint-config-unobtrusive": "^1.2.5",
+    "eslint-plugin-import": "^2.25.4"
+  }
+}
