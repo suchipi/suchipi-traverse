@@ -15,6 +15,10 @@
     "all"
   ],
   "author": "Lily Scott <me@suchipi.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/suchipi/suchipi-traverse.git"
+  },
   "license": "MIT",
   "devDependencies": {
     "eslint": "^8.8.0",
