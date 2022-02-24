@@ -1,9 +1,11 @@
 const stop = Symbol("stop");
 
 function doTraverse(obj, beforeCallback, afterCallback, path) {
-  const result = beforeCallback(obj, path);
-  if (result === stop) {
-    return;
+  if (beforeCallback) {
+    const result = beforeCallback(obj, path);
+    if (result === stop) {
+      return;
+    }
   }
 
   if (Array.isArray(obj)) {
@@ -19,10 +21,12 @@ function doTraverse(obj, beforeCallback, afterCallback, path) {
     }
   }
 
-  afterCallback(obj, path);
+  if (afterCallback) {
+    afterCallback(obj, path);
+  }
 }
 
-function traverse(obj, { before = () => {}, after = () => {} } = {}) {
+function traverse(obj, { before = null, after = null } = {}) {
   doTraverse(obj, before, after, []);
 }
 
