@@ -1,3 +1,4 @@
+const util = require("util");
 const traverse = require(".");
 
 const tree = {
@@ -9,6 +10,9 @@ const tree = {
   right: {
     type: "Right",
     children: [4, 5, 6],
+  },
+  another: function someFunction(a, b, c) {
+    return true;
   },
 };
 
@@ -22,7 +26,7 @@ test("basic before", () => {
           //
           `At '.${path.join(".")}':`,
           "\n",
-          JSON.stringify(value),
+          util.inspect(value),
           "\n",
           "\n",
         ]
@@ -32,19 +36,24 @@ test("basic before", () => {
 
   expect(messages.join("").trim()).toMatchInlineSnapshot(`
     At '.':
-    {"type":"Root","left":{"type":"Left","children":[1,2,3]},"right":{"type":"Right","children":[4,5,6]}}
+    {
+      type: 'Root',
+      left: { type: 'Left', children: [ 1, 2, 3 ] },
+      right: { type: 'Right', children: [ 4, 5, 6 ] },
+      another: [Function: someFunction]
+    }
 
     At '.type':
-    "Root"
+    'Root'
 
     At '.left':
-    {"type":"Left","children":[1,2,3]}
+    { type: 'Left', children: [ 1, 2, 3 ] }
 
     At '.left.type':
-    "Left"
+    'Left'
 
     At '.left.children':
-    [1,2,3]
+    [ 1, 2, 3 ]
 
     At '.left.children.0':
     1
@@ -56,13 +65,13 @@ test("basic before", () => {
     3
 
     At '.right':
-    {"type":"Right","children":[4,5,6]}
+    { type: 'Right', children: [ 4, 5, 6 ] }
 
     At '.right.type':
-    "Right"
+    'Right'
 
     At '.right.children':
-    [4,5,6]
+    [ 4, 5, 6 ]
 
     At '.right.children.0':
     4
@@ -72,6 +81,24 @@ test("basic before", () => {
 
     At '.right.children.2':
     6
+
+    At '.another':
+    [Function: someFunction]
+
+    At '.another.length':
+    3
+
+    At '.another.name':
+    'someFunction'
+
+    At '.another.arguments':
+    null
+
+    At '.another.caller':
+    null
+
+    At '.another.prototype':
+    {}
   `);
 });
 
@@ -85,7 +112,7 @@ test("before with stop", () => {
           //
           `At '.${path.join(".")}':`,
           "\n",
-          JSON.stringify(value),
+          util.inspect(value),
           "\n",
           "\n",
         ]
@@ -99,22 +126,27 @@ test("before with stop", () => {
 
   expect(messages.join("").trim()).toMatchInlineSnapshot(`
     At '.':
-    {"type":"Root","left":{"type":"Left","children":[1,2,3]},"right":{"type":"Right","children":[4,5,6]}}
+    {
+      type: 'Root',
+      left: { type: 'Left', children: [ 1, 2, 3 ] },
+      right: { type: 'Right', children: [ 4, 5, 6 ] },
+      another: [Function: someFunction]
+    }
 
     At '.type':
-    "Root"
+    'Root'
 
     At '.left':
-    {"type":"Left","children":[1,2,3]}
+    { type: 'Left', children: [ 1, 2, 3 ] }
 
     At '.right':
-    {"type":"Right","children":[4,5,6]}
+    { type: 'Right', children: [ 4, 5, 6 ] }
 
     At '.right.type':
-    "Right"
+    'Right'
 
     At '.right.children':
-    [4,5,6]
+    [ 4, 5, 6 ]
 
     At '.right.children.0':
     4
@@ -124,6 +156,24 @@ test("before with stop", () => {
 
     At '.right.children.2':
     6
+
+    At '.another':
+    [Function: someFunction]
+
+    At '.another.length':
+    3
+
+    At '.another.name':
+    'someFunction'
+
+    At '.another.arguments':
+    null
+
+    At '.another.caller':
+    null
+
+    At '.another.prototype':
+    {}
   `);
 });
 
@@ -137,7 +187,7 @@ test("basic after", () => {
           //
           `At '.${path.join(".")}':`,
           "\n",
-          JSON.stringify(value),
+          util.inspect(value),
           "\n",
           "\n",
         ]
@@ -147,10 +197,10 @@ test("basic after", () => {
 
   expect(messages.join("").trim()).toMatchInlineSnapshot(`
     At '.type':
-    "Root"
+    'Root'
 
     At '.left.type':
-    "Left"
+    'Left'
 
     At '.left.children.0':
     1
@@ -162,13 +212,13 @@ test("basic after", () => {
     3
 
     At '.left.children':
-    [1,2,3]
+    [ 1, 2, 3 ]
 
     At '.left':
-    {"type":"Left","children":[1,2,3]}
+    { type: 'Left', children: [ 1, 2, 3 ] }
 
     At '.right.type':
-    "Right"
+    'Right'
 
     At '.right.children.0':
     4
@@ -180,13 +230,36 @@ test("basic after", () => {
     6
 
     At '.right.children':
-    [4,5,6]
+    [ 4, 5, 6 ]
 
     At '.right':
-    {"type":"Right","children":[4,5,6]}
+    { type: 'Right', children: [ 4, 5, 6 ] }
+
+    At '.another.length':
+    3
+
+    At '.another.name':
+    'someFunction'
+
+    At '.another.arguments':
+    null
+
+    At '.another.caller':
+    null
+
+    At '.another.prototype':
+    {}
+
+    At '.another':
+    [Function: someFunction]
 
     At '.':
-    {"type":"Root","left":{"type":"Left","children":[1,2,3]},"right":{"type":"Right","children":[4,5,6]}}
+    {
+      type: 'Root',
+      left: { type: 'Left', children: [ 1, 2, 3 ] },
+      right: { type: 'Right', children: [ 4, 5, 6 ] },
+      another: [Function: someFunction]
+    }
   `);
 });
 
@@ -200,7 +273,7 @@ test("before and after", () => {
           //
           `Before at '.${path.join(".")}':`,
           "\n",
-          JSON.stringify(value),
+          util.inspect(value),
           "\n",
           "\n",
         ]
@@ -212,7 +285,7 @@ test("before and after", () => {
           //
           `After at '.${path.join(".")}':`,
           "\n",
-          JSON.stringify(value),
+          util.inspect(value),
           "\n",
           "\n",
         ]
@@ -222,25 +295,30 @@ test("before and after", () => {
 
   expect(messages.join("").trim()).toMatchInlineSnapshot(`
     Before at '.':
-    {"type":"Root","left":{"type":"Left","children":[1,2,3]},"right":{"type":"Right","children":[4,5,6]}}
+    {
+      type: 'Root',
+      left: { type: 'Left', children: [ 1, 2, 3 ] },
+      right: { type: 'Right', children: [ 4, 5, 6 ] },
+      another: [Function: someFunction]
+    }
 
     Before at '.type':
-    "Root"
+    'Root'
 
     After at '.type':
-    "Root"
+    'Root'
 
     Before at '.left':
-    {"type":"Left","children":[1,2,3]}
+    { type: 'Left', children: [ 1, 2, 3 ] }
 
     Before at '.left.type':
-    "Left"
+    'Left'
 
     After at '.left.type':
-    "Left"
+    'Left'
 
     Before at '.left.children':
-    [1,2,3]
+    [ 1, 2, 3 ]
 
     Before at '.left.children.0':
     1
@@ -261,22 +339,22 @@ test("before and after", () => {
     3
 
     After at '.left.children':
-    [1,2,3]
+    [ 1, 2, 3 ]
 
     After at '.left':
-    {"type":"Left","children":[1,2,3]}
+    { type: 'Left', children: [ 1, 2, 3 ] }
 
     Before at '.right':
-    {"type":"Right","children":[4,5,6]}
+    { type: 'Right', children: [ 4, 5, 6 ] }
 
     Before at '.right.type':
-    "Right"
+    'Right'
 
     After at '.right.type':
-    "Right"
+    'Right'
 
     Before at '.right.children':
-    [4,5,6]
+    [ 4, 5, 6 ]
 
     Before at '.right.children.0':
     4
@@ -297,12 +375,53 @@ test("before and after", () => {
     6
 
     After at '.right.children':
-    [4,5,6]
+    [ 4, 5, 6 ]
 
     After at '.right':
-    {"type":"Right","children":[4,5,6]}
+    { type: 'Right', children: [ 4, 5, 6 ] }
+
+    Before at '.another':
+    [Function: someFunction]
+
+    Before at '.another.length':
+    3
+
+    After at '.another.length':
+    3
+
+    Before at '.another.name':
+    'someFunction'
+
+    After at '.another.name':
+    'someFunction'
+
+    Before at '.another.arguments':
+    null
+
+    After at '.another.arguments':
+    null
+
+    Before at '.another.caller':
+    null
+
+    After at '.another.caller':
+    null
+
+    Before at '.another.prototype':
+    {}
+
+    After at '.another.prototype':
+    {}
+
+    After at '.another':
+    [Function: someFunction]
 
     After at '.':
-    {"type":"Root","left":{"type":"Left","children":[1,2,3]},"right":{"type":"Right","children":[4,5,6]}}
+    {
+      type: 'Root',
+      left: { type: 'Left', children: [ 1, 2, 3 ] },
+      right: { type: 'Right', children: [ 4, 5, 6 ] },
+      another: [Function: someFunction]
+    }
   `);
 });

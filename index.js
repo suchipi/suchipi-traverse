@@ -1,6 +1,21 @@
+const hasOwnProperty = Object.prototype.hasOwnProperty;
+
 const stop = Symbol("stop");
 
-function doTraverse(obj, beforeCallback, afterCallback, path) {
+function isNonPrimitive(value) {
+  return (
+    (typeof value === "object" && value != null) || typeof value === "function"
+  );
+}
+
+function doTraverse(obj, beforeCallback, afterCallback, path, seens) {
+  if (seens.has(obj)) {
+    return;
+  }
+  if (isNonPrimitive(obj)) {
+    seens.add(obj);
+  }
+
   if (beforeCallback) {
     const result = beforeCallback(obj, path);
     if (result === stop) {
@@ -12,12 +27,15 @@ function doTraverse(obj, beforeCallback, afterCallback, path) {
     const children = Array.from(obj);
     for (let i = 0; i < children.length; i++) {
       const child = children[i];
-      doTraverse(child, beforeCallback, afterCallback, path.concat(i));
+      doTraverse(child, beforeCallback, afterCallback, path.concat(i), seens);
     }
-  } else if (typeof obj === "object" && obj != null) {
-    const entries = Object.entries(obj);
-    for (const [key, value] of entries) {
-      doTraverse(value, beforeCallback, afterCallback, path.concat(key));
+  } else if (isNonPrimitive(obj)) {
+    const descriptors = Object.getOwnPropertyDescriptors(obj);
+    const keys = Object.keys(descriptors);
+
+    for (const key of keys) {
+      const value = obj[key];
+      doTraverse(value, beforeCallback, afterCallback, path.concat(key), seens);
     }
   }
 
@@ -27,7 +45,7 @@ function doTraverse(obj, beforeCallback, afterCallback, path) {
 }
 
 function traverse(obj, { before = null, after = null } = {}) {
-  doTraverse(obj, before, after, []);
+  doTraverse(obj, before, after, [], new (WeakSet || Set)());
 }
 
 traverse.stop = stop;
