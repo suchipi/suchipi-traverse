@@ -4,9 +4,10 @@ Basic traverse function for deeply iterating over objects/arrays/etc.
 
 ## Features
 
-- Only searches through an object's own enumerable properties
+- Only searches through an object's own properties
 - Can handle mutation/deletion during traversal
 - Provides your visitor callback a path to the current value (in addition to the value itself)
+- Avoids traversing over already-traversed values, to avoid cycles
 
 ## Usage
 
