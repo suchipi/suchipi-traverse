@@ -31,7 +31,11 @@ function doTraverse(obj, beforeCallback, afterCallback, path, seens) {
     }
   } else if (isNonPrimitive(obj)) {
     const descriptors = Object.getOwnPropertyDescriptors(obj);
-    const keys = Object.keys(descriptors);
+    const keys = Object.entries(descriptors)
+      .filter(([_key, descriptor]) => {
+        return typeof descriptor.get === "undefined";
+      })
+      .map(([key, _descriptor]) => key);
 
     for (const key of keys) {
       const value = obj[key];

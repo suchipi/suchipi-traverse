@@ -14,6 +14,9 @@ const tree = {
   another: function someFunction(a, b, c) {
     return true;
   },
+  get dontCallThis() {
+    throw new Error("do not throw souls!!");
+  },
 };
 
 test("basic before", () => {
@@ -40,7 +43,8 @@ test("basic before", () => {
       type: 'Root',
       left: { type: 'Left', children: [ 1, 2, 3 ] },
       right: { type: 'Right', children: [ 4, 5, 6 ] },
-      another: [Function: someFunction]
+      another: [Function: someFunction],
+      dontCallThis: [Getter]
     }
 
     At '.type':
@@ -130,7 +134,8 @@ test("before with stop", () => {
       type: 'Root',
       left: { type: 'Left', children: [ 1, 2, 3 ] },
       right: { type: 'Right', children: [ 4, 5, 6 ] },
-      another: [Function: someFunction]
+      another: [Function: someFunction],
+      dontCallThis: [Getter]
     }
 
     At '.type':
@@ -258,7 +263,8 @@ test("basic after", () => {
       type: 'Root',
       left: { type: 'Left', children: [ 1, 2, 3 ] },
       right: { type: 'Right', children: [ 4, 5, 6 ] },
-      another: [Function: someFunction]
+      another: [Function: someFunction],
+      dontCallThis: [Getter]
     }
   `);
 });
@@ -299,7 +305,8 @@ test("before and after", () => {
       type: 'Root',
       left: { type: 'Left', children: [ 1, 2, 3 ] },
       right: { type: 'Right', children: [ 4, 5, 6 ] },
-      another: [Function: someFunction]
+      another: [Function: someFunction],
+      dontCallThis: [Getter]
     }
 
     Before at '.type':
@@ -421,7 +428,8 @@ test("before and after", () => {
       type: 'Root',
       left: { type: 'Left', children: [ 1, 2, 3 ] },
       right: { type: 'Right', children: [ 4, 5, 6 ] },
-      another: [Function: someFunction]
+      another: [Function: someFunction],
+      dontCallThis: [Getter]
     }
   `);
 });
