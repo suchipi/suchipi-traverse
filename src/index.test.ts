@@ -33,13 +33,13 @@ test("basic before", () => {
           util.inspect(value),
           "\n",
           "\n",
-        ]
+        ],
       );
     },
   });
 
   expect(messages.join("").trim()).toMatchInlineSnapshot(`
-    At '.':
+    "At '.':
     {
       type: 'Root',
       left: { type: 'Left', children: [ 1, 2, 3 ] },
@@ -96,14 +96,8 @@ test("basic before", () => {
     At '.another.name':
     'someFunction'
 
-    At '.another.arguments':
-    null
-
-    At '.another.caller':
-    null
-
     At '.another.prototype':
-    {}
+    {}"
   `);
 });
 
@@ -120,7 +114,7 @@ test("before with stop", () => {
           util.inspect(value),
           "\n",
           "\n",
-        ]
+        ],
       );
 
       if (path[path.length - 1] === "left") {
@@ -130,7 +124,7 @@ test("before with stop", () => {
   });
 
   expect(messages.join("").trim()).toMatchInlineSnapshot(`
-    At '.':
+    "At '.':
     {
       type: 'Root',
       left: { type: 'Left', children: [ 1, 2, 3 ] },
@@ -172,14 +166,8 @@ test("before with stop", () => {
     At '.another.name':
     'someFunction'
 
-    At '.another.arguments':
-    null
-
-    At '.another.caller':
-    null
-
     At '.another.prototype':
-    {}
+    {}"
   `);
 });
 
@@ -196,13 +184,13 @@ test("basic after", () => {
           util.inspect(value),
           "\n",
           "\n",
-        ]
+        ],
       );
     },
   });
 
   expect(messages.join("").trim()).toMatchInlineSnapshot(`
-    At '.type':
+    "At '.type':
     'Root'
 
     At '.left.type':
@@ -247,12 +235,6 @@ test("basic after", () => {
     At '.another.name':
     'someFunction'
 
-    At '.another.arguments':
-    null
-
-    At '.another.caller':
-    null
-
     At '.another.prototype':
     {}
 
@@ -266,7 +248,7 @@ test("basic after", () => {
       right: { type: 'Right', children: [ 4, 5, 6 ] },
       another: [Function: someFunction],
       dontCallThis: [Getter]
-    }
+    }"
   `);
 });
 
@@ -283,7 +265,7 @@ test("before and after", () => {
           util.inspect(value),
           "\n",
           "\n",
-        ]
+        ],
       );
     },
     after: (value, path) => {
@@ -295,13 +277,13 @@ test("before and after", () => {
           util.inspect(value),
           "\n",
           "\n",
-        ]
+        ],
       );
     },
   });
 
   expect(messages.join("").trim()).toMatchInlineSnapshot(`
-    Before at '.':
+    "Before at '.':
     {
       type: 'Root',
       left: { type: 'Left', children: [ 1, 2, 3 ] },
@@ -403,18 +385,6 @@ test("before and after", () => {
     After at '.another.name':
     'someFunction'
 
-    Before at '.another.arguments':
-    null
-
-    After at '.another.arguments':
-    null
-
-    Before at '.another.caller':
-    null
-
-    After at '.another.caller':
-    null
-
     Before at '.another.prototype':
     {}
 
@@ -431,7 +401,7 @@ test("before and after", () => {
       right: { type: 'Right', children: [ 4, 5, 6 ] },
       another: [Function: someFunction],
       dontCallThis: [Getter]
-    }
+    }"
   `);
 });
 

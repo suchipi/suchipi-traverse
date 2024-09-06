@@ -15,7 +15,7 @@ function doTraverse(
     | undefined
     | ((value: any, path: Array<string | number>) => void),
   path: Array<string | number>,
-  seens: WeakSet<any> | Set<any>
+  seens: WeakSet<any> | Set<any>,
 ) {
   if (seens.has(obj)) {
     return;
@@ -80,7 +80,7 @@ function theTraverse(
      * the traversal stack; this is equivalent to a depth-first search.
      */
     after?: (value: any, path: Array<string | number>) => void;
-  }
+  },
 ) {
   const { before, after } = callbacks ?? {};
 
@@ -113,7 +113,7 @@ const traverse: {
        * the traversal stack; this is equivalent to a depth-first search.
        */
       after?: (value: any, path: Array<string | number>) => void;
-    }
+    },
   ): void;
 
   stop: typeof stop;

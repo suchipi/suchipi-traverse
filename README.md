@@ -101,7 +101,7 @@ function traverse(
   callbacks?: {
     before?: (value: any, path: Array<string | number>) => void | typeof stop;
     after?: (value: any, path: Array<string | number>) => void;
-  }
+  },
 ): void;
 ```
 
