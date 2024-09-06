@@ -49,7 +49,8 @@ function doTraverse(obj, beforeCallback, afterCallback, path, seens) {
 }
 
 function traverse(obj, { before = null, after = null } = {}) {
-  doTraverse(obj, before, after, [], new (WeakSet || Set)());
+  const setConstructor = typeof WeakSet === "undefined" ? Set : WeakSet;
+  doTraverse(obj, before, after, [], new setConstructor());
 }
 
 traverse.stop = stop;

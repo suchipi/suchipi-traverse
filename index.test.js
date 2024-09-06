@@ -433,3 +433,28 @@ test("before and after", () => {
     }
   `);
 });
+
+describe("when WeakSet isn't available", () => {
+  let realWeakSet;
+  beforeEach(() => {
+    realWeakSet = WeakSet;
+    delete global.WeakSet;
+  });
+  afterEach(() => {
+    global.WeakSet = realWeakSet;
+  });
+
+  test("still works okay", () => {
+    const messages = [];
+
+    expect(() => {
+      traverse(tree, {
+        before: (value, path) => {
+          messages.push([value, path]);
+        },
+      });
+    }).not.toThrow();
+
+    expect(messages.length).toBeGreaterThan(0);
+  });
+});
