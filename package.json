@@ -2,8 +2,8 @@
   "name": "@suchipi/traverse",
   "version": "4.0.1",
   "description": "Basic depth-first traversal function",
-  "main": "index.js",
-  "types": "index.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "keywords": [
     "traverse",
     "tree",
@@ -21,22 +21,14 @@
   },
   "license": "MIT",
   "scripts": {
-    "test": "jest"
+    "build": "tsc",
+    "test": "vitest"
   },
   "devDependencies": {
     "@types/jest": "^29.5.12",
-    "eslint": "^8.57.0",
-    "eslint-config-unobtrusive": "^1.2.5",
-    "eslint-plugin-import": "^2.30.0",
-    "jest": "^29.7.0",
-    "jest-snapshot-serializer-raw": "^1.2.0",
     "prettier": "^2.8.8",
-    "typescript": "^5.5.4"
-  },
-  "jest": {
-    "snapshotSerializers": [
-      "jest-snapshot-serializer-raw/always"
-    ]
+    "typescript": "^5.5.4",
+    "vitest": "^2.0.5"
   },
   "prettier": {}
 }

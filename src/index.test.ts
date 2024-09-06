@@ -1,5 +1,6 @@
-const util = require("util");
-const traverse = require(".");
+import { describe, test, beforeEach, afterEach, expect } from "vitest";
+import util from "node:util";
+import traverse from "./index";
 
 const tree = {
   type: "Root",
@@ -11,7 +12,7 @@ const tree = {
     type: "Right",
     children: [4, 5, 6],
   },
-  another: function someFunction(a, b, c) {
+  another: function someFunction(_a: any, _b: any, _c: any) {
     return true;
   },
   get dontCallThis() {
@@ -20,7 +21,7 @@ const tree = {
 };
 
 test("basic before", () => {
-  const messages = [];
+  const messages: Array<any> = [];
 
   traverse(tree, {
     before: (value, path) => {
@@ -107,7 +108,7 @@ test("basic before", () => {
 });
 
 test("before with stop", () => {
-  const messages = [];
+  const messages: Array<any> = [];
 
   traverse(tree, {
     before: (value, path) => {
@@ -183,7 +184,7 @@ test("before with stop", () => {
 });
 
 test("basic after", () => {
-  const messages = [];
+  const messages: Array<any> = [];
 
   traverse(tree, {
     after: (value, path) => {
@@ -270,7 +271,7 @@ test("basic after", () => {
 });
 
 test("before and after", () => {
-  const messages = [];
+  const messages: Array<any> = [];
 
   traverse(tree, {
     before: (value, path) => {
@@ -435,9 +436,10 @@ test("before and after", () => {
 });
 
 describe("when WeakSet isn't available", () => {
-  let realWeakSet;
+  let realWeakSet: any;
   beforeEach(() => {
     realWeakSet = WeakSet;
+    // @ts-ignore The operand of a 'delete' operator must be optional. ts(2790)
     delete global.WeakSet;
   });
   afterEach(() => {
@@ -445,7 +447,7 @@ describe("when WeakSet isn't available", () => {
   });
 
   test("still works okay", () => {
-    const messages = [];
+    const messages: Array<any> = [];
 
     expect(() => {
       traverse(tree, {
