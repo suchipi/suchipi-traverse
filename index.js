@@ -1,5 +1,3 @@
-const hasOwnProperty = Object.prototype.hasOwnProperty;
-
 const stop = Symbol("stop");
 
 function isNonPrimitive(value) {
