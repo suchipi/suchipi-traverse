@@ -1,5 +1,3 @@
-const stop = Symbol("stop");
-
 function isNonPrimitive(value: unknown): boolean {
   return (
     (typeof value === "object" && value != null) || typeof value === "function"
@@ -8,12 +6,25 @@ function isNonPrimitive(value: unknown): boolean {
 
 function doTraverse(
   obj: unknown,
+  descriptor: PropertyDescriptor,
+  filter: (
+    descriptor: PropertyDescriptor,
+    path: Array<string | number>,
+  ) => boolean,
   beforeCallback:
     | undefined
-    | ((value: any, path: Array<string | number>) => void | typeof stop),
+    | ((
+        value: any,
+        path: Array<string | number>,
+        descriptor: PropertyDescriptor | null,
+      ) => void),
   afterCallback:
     | undefined
-    | ((value: any, path: Array<string | number>) => void),
+    | ((
+        value: any,
+        path: Array<string | number>,
+        descriptor: PropertyDescriptor | null,
+      ) => void),
   path: Array<string | number>,
   seens: WeakSet<any> | Set<any>,
 ) {
@@ -25,38 +36,60 @@ function doTraverse(
   }
 
   if (beforeCallback) {
-    const result = beforeCallback(obj, path);
-    if (result === stop) {
-      return;
-    }
+    beforeCallback(obj, path, descriptor);
   }
 
   if (Array.isArray(obj)) {
     const children = Array.from(obj);
     for (let i = 0; i < children.length; i++) {
-      const child = children[i];
-      doTraverse(child, beforeCallback, afterCallback, path.concat(i), seens);
+      const childPath = path.concat(i);
+      const childDescriptor = Object.getOwnPropertyDescriptor(obj, i)!;
+      if (filter(childDescriptor, childPath)) {
+        const child = children[i];
+        doTraverse(
+          child,
+          childDescriptor,
+          filter,
+          beforeCallback,
+          afterCallback,
+          childPath,
+          seens,
+        );
+      }
     }
   } else if (isNonPrimitive(obj)) {
     const descriptors = Object.getOwnPropertyDescriptors(obj);
-    const keys = Object.entries(descriptors)
-      .filter(([_key, descriptor]) => {
-        return typeof descriptor.get === "undefined";
-      })
-      .map(([key, _descriptor]) => key);
+    const keys = Object.keys(descriptors);
 
     for (const key of keys) {
-      const value = (obj as { [key: PropertyKey]: any })[key];
-      doTraverse(value, beforeCallback, afterCallback, path.concat(key), seens);
+      const childPath = path.concat(key);
+      const childDescriptor = descriptors[key];
+      if (filter(childDescriptor, childPath)) {
+        const value = (obj as { [key: PropertyKey]: any })[key];
+        doTraverse(
+          value,
+          childDescriptor,
+          filter,
+          beforeCallback,
+          afterCallback,
+          childPath,
+          seens,
+        );
+      }
     }
   }
 
   if (afterCallback) {
-    afterCallback(obj, path);
+    afterCallback(obj, path, descriptor);
   }
 }
 
-function theTraverse(
+const defaultFilter = (
+  descriptor: PropertyDescriptor,
+  _path: Array<string | number>,
+) => !descriptor.get;
+
+function traverse(
   /**
    * The tree structure to traverse.
    */
@@ -69,57 +102,64 @@ function theTraverse(
     /**
      * If you provide a `before` callback, it will be called on the way *down*
      * the traversal stack; this is equivalent to a breadth-first search.
-     *
-     * If your before callback returns `stop`, the children of the value that was
-     * passed into your callback will not be traversed over.
      */
-    before?: (value: any, path: Array<string | number>) => void | typeof stop;
+    before?: (value: any, path: Array<string | number>) => void;
 
     /**
      * If you provide an `after` callback, it will be called on the way *up*
      * the traversal stack; this is equivalent to a depth-first search.
      */
     after?: (value: any, path: Array<string | number>) => void;
+
+    /**
+     * If you provide a `filter` callback, it will be called prior to
+     * traversing a path, and its return value will be used to determine
+     * whether children of this path should be visited.
+     *
+     * This will be called before the `before` callback, if there is a
+     * `before` callback present.
+     *
+     * This defaults to a function which returns true for properties which
+     * aren't getters.
+     */
+    filter?: (
+      descriptor: PropertyDescriptor,
+      path: Array<string | number>,
+    ) => boolean;
   },
-) {
-  const { before, after } = callbacks ?? {};
+): void {
+  const { before, after, filter = defaultFilter } = callbacks ?? {};
+
+  const syntheticRootDescriptor = {
+    value: tree,
+    writable: true,
+    enumerable: true,
+    configurable: true,
+  };
+  if (!filter(syntheticRootDescriptor, [])) {
+    return;
+  }
 
   const setConstructor = typeof WeakSet === "undefined" ? Set : WeakSet;
-  doTraverse(tree, before, after, [], new setConstructor());
+  doTraverse(
+    tree,
+    syntheticRootDescriptor,
+    filter,
+    before,
+    after,
+    [],
+    new setConstructor(),
+  );
 }
 
-const traverse: {
-  (
-    /**
-     * The tree structure to traverse.
-     */
-    tree: any,
+Object.defineProperty(traverse, "stop", {
+  get() {
+    throw new Error(
+      "traverse.stop has been removed. Use the 'filter' callback instead.",
+    );
+  },
+  configurable: true,
+});
 
-    /**
-     * Callbacks to call during traversal
-     */
-    callbacks?: {
-      /**
-       * If you provide a `before` callback, it will be called on the way *down*
-       * the traversal stack; this is equivalent to a breadth-first search.
-       *
-       * If your before callback returns `stop`, the children of the value that was
-       * passed into your callback will not be traversed over.
-       */
-      before?: (value: any, path: Array<string | number>) => void | typeof stop;
-
-      /**
-       * If you provide an `after` callback, it will be called on the way *up*
-       * the traversal stack; this is equivalent to a depth-first search.
-       */
-      after?: (value: any, path: Array<string | number>) => void;
-    },
-  ): void;
-
-  stop: typeof stop;
-} = Object.assign(theTraverse, {
-  stop,
-}) as any;
-
-export default traverse;
-export { stop, traverse };
+module.exports = traverse;
+traverse.default = traverse;
