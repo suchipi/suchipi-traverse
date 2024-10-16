@@ -161,5 +161,5 @@ Object.defineProperty(traverse, "stop", {
   configurable: true,
 });
 
-module.exports = traverse;
 traverse.default = traverse;
+export = traverse;
