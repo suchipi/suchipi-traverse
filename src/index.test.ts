@@ -167,6 +167,76 @@ test("before with filter", () => {
   `);
 });
 
+test("before with stop", () => {
+  const messages: Array<any> = [];
+
+  traverse(tree, {
+    before: (value, path) => {
+      messages.push(
+        ...[
+          //
+          `At '.${path.join(".")}':`,
+          "\n",
+          util.inspect(value),
+          "\n",
+          "\n",
+        ],
+      );
+
+      if (path[path.length - 1] === "left") {
+        return traverse.stop;
+      }
+    },
+  });
+
+  expect(messages.join("").trim()).toMatchInlineSnapshot(`
+    "At '.':
+    {
+      type: 'Root',
+      left: { type: 'Left', children: [ 1, 2, 3 ] },
+      right: { type: 'Right', children: [ 4, 5, 6 ] },
+      another: [Function: someFunction],
+      dontCallThis: [Getter]
+    }
+
+    At '.type':
+    'Root'
+
+    At '.left':
+    { type: 'Left', children: [ 1, 2, 3 ] }
+
+    At '.right':
+    { type: 'Right', children: [ 4, 5, 6 ] }
+
+    At '.right.type':
+    'Right'
+
+    At '.right.children':
+    [ 4, 5, 6 ]
+
+    At '.right.children.0':
+    4
+
+    At '.right.children.1':
+    5
+
+    At '.right.children.2':
+    6
+
+    At '.another':
+    [Function: someFunction]
+
+    At '.another.length':
+    3
+
+    At '.another.name':
+    'someFunction'
+
+    At '.another.prototype':
+    {}"
+  `);
+});
+
 test("specifying filter includes getters", () => {
   const messages: Array<any> = [];
 

@@ -1,3 +1,5 @@
+const stop = Symbol("stop");
+
 function isNonPrimitive(value: unknown): boolean {
   return (
     (typeof value === "object" && value != null) || typeof value === "function"
@@ -17,7 +19,7 @@ function doTraverse(
         value: any,
         path: Array<string | number>,
         descriptor: PropertyDescriptor | null,
-      ) => void),
+      ) => void | typeof stop),
   afterCallback:
     | undefined
     | ((
@@ -36,7 +38,10 @@ function doTraverse(
   }
 
   if (beforeCallback) {
-    beforeCallback(obj, path, descriptor);
+    const result = beforeCallback(obj, path, descriptor);
+    if (result === stop) {
+      return;
+    }
   }
 
   if (Array.isArray(obj)) {
@@ -102,8 +107,11 @@ function traverse(
     /**
      * If you provide a `before` callback, it will be called on the way *down*
      * the traversal stack; this is equivalent to a breadth-first search.
+     *
+     * If you return `traverse.stop`, children of the current value will not be
+     * traversed over.
      */
-    before?: (value: any, path: Array<string | number>) => void;
+    before?: (value: any, path: Array<string | number>) => void | typeof stop;
 
     /**
      * If you provide an `after` callback, it will be called on the way *up*
@@ -152,14 +160,6 @@ function traverse(
   );
 }
 
-Object.defineProperty(traverse, "stop", {
-  get() {
-    throw new Error(
-      "traverse.stop has been removed. Use the 'filter' callback instead.",
-    );
-  },
-  configurable: true,
-});
-
+traverse.stop = stop;
 traverse.default = traverse;
 export = traverse;
