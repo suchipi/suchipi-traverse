@@ -25,10 +25,9 @@
     "test": "vitest"
   },
   "devDependencies": {
-    "@types/jest": "^29.5.12",
-    "prettier": "^3.3.3",
-    "typescript": "^5.5.4",
-    "vitest": "^2.0.5"
+    "prettier": "^3.5.3",
+    "typescript": "^5.8.2",
+    "vitest": "^3.0.9"
   },
   "prettier": {}
 }
