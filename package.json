@@ -1,6 +1,6 @@
 {
   "name": "@suchipi/traverse",
-  "version": "5.1.0",
+  "version": "5.1.1",
   "description": "Basic depth-first traversal function",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
