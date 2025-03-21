@@ -105,12 +105,12 @@ function traverse(
 ): void;
 ```
 
-Pass in any JSON-compatible value (the `tree` parameter) and a callback function (the `callback` parameter). Your `tree` will be searched through, and `callback` will be called for each descendant in the tree.
+Pass in any JSON-compatible value (the `tree` parameter) and callback function(s) (the `callbacks` parameter). Your `tree` will be searched through, and `callbacks.before` and `callbacks.after` will be called for each descendant in the tree.
 
-When `callback` is called, it will be called with two arguments:
+When `callbacks.before` or `callbacks.after` gets called, it will be called with two arguments:
 
 - The value of the current descendant (could be an object, an array, a string, a number, etc)
-- The path from the initially-passed `tree` object to this descendant (an array of strings or numbers)
+- The property path from the initially-passed `tree` object to this descendant (an array of strings or numbers)
 
 ### `stop`
 
@@ -123,8 +123,6 @@ You can return `stop` from a `before` callback passed into `traverse` to stop tr
 - If you want to create a new tree instead of mutating the existing one, you can combine lodash's `set` function with [immer](https://www.npmjs.com/package/immer).
 
 ## Troubleshooting
-
-- Don't pass an object with circular references into `traverse`. If you do, a callstack overflow error will occur. To verify that the object you're passing into `traverse` doesn't contain any circular references, you can try passing it into `JSON.stringify`; `JSON.stringify` will throw an error if you pass it an object with circular references.
 
 - If you're expecting an object property to be visited by `traverse`, but it isn't, make sure the property is an "own," "enumerable" property. For instance, class methods found on an instance of a class are not "own" properties, so `traverse` won't visit them. See [MDN's article on 'Enumerability and ownership of properties'](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Enumerability_and_ownership_of_properties) for more info.
 
