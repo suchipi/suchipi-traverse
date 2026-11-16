@@ -192,5 +192,9 @@ export { stop, traverse };
 export default traverse;
 
 if (typeof module === "object" && module !== null) {
-  module.exports = traverse;
+  try {
+    module.exports = traverse;
+  } catch {
+    // ignored
+  }
 }
