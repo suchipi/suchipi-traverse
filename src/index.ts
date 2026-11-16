@@ -94,42 +94,11 @@ const defaultFilter = (
   _path: Array<string | number>,
 ) => !descriptor.get;
 
-function traverse(
-  /**
-   * The tree structure to traverse.
-   */
+function innerTraverse(
   tree: any,
-
-  /**
-   * Callbacks to call during traversal
-   */
   callbacks?: {
-    /**
-     * If you provide a `before` callback, it will be called on the way *down*
-     * the traversal stack; this is equivalent to a breadth-first search.
-     *
-     * If you return `traverse.stop`, children of the current value will not be
-     * traversed over.
-     */
     before?: (value: any, path: Array<string | number>) => void | typeof stop;
-
-    /**
-     * If you provide an `after` callback, it will be called on the way *up*
-     * the traversal stack; this is equivalent to a depth-first search.
-     */
     after?: (value: any, path: Array<string | number>) => void;
-
-    /**
-     * If you provide a `filter` callback, it will be called prior to
-     * traversing a path, and its return value will be used to determine
-     * whether children of this path should be visited.
-     *
-     * This will be called before the `before` callback, if there is a
-     * `before` callback present.
-     *
-     * This defaults to a function which returns true for properties which
-     * aren't getters.
-     */
     filter?: (
       descriptor: PropertyDescriptor,
       path: Array<string | number>,
@@ -160,6 +129,68 @@ function traverse(
   );
 }
 
-traverse.stop = stop;
-traverse.default = traverse;
-export = traverse;
+const traverse: {
+  (
+    /**
+     * The tree structure to traverse.
+     */
+    tree: any,
+
+    /**
+     * Callbacks to call during traversal
+     */
+    callbacks?: {
+      /**
+       * If you provide a `before` callback, it will be called on the way *down*
+       * the traversal stack; this is equivalent to a breadth-first search.
+       *
+       * If you return `traverse.stop`, children of the current value will not be
+       * traversed over.
+       */
+      before?: (value: any, path: Array<string | number>) => void | typeof stop;
+
+      /**
+       * If you provide an `after` callback, it will be called on the way *up*
+       * the traversal stack; this is equivalent to a depth-first search.
+       */
+      after?: (value: any, path: Array<string | number>) => void;
+
+      /**
+       * If you provide a `filter` callback, it will be called prior to
+       * traversing a path, and its return value will be used to determine
+       * whether children of this path should be visited.
+       *
+       * This will be called before the `before` callback, if there is a
+       * `before` callback present.
+       *
+       * This defaults to a function which returns true for properties which
+       * aren't getters.
+       */
+      filter?: (
+        descriptor: PropertyDescriptor,
+        path: Array<string | number>,
+      ) => boolean;
+    },
+  ): void;
+
+  readonly stop: typeof stop;
+  default: typeof traverse;
+  traverse: typeof traverse;
+} = Object.assign(innerTraverse, {
+  stop: stop as typeof stop,
+  default: innerTraverse as any,
+  traverse: innerTraverse as any,
+});
+Object.defineProperty(traverse, "name", {
+  value: "traverse",
+  configurable: true,
+  enumerable: false,
+  writable: true,
+});
+
+export { stop, traverse };
+export default traverse;
+
+if (typeof module === "object" && module !== null) {
+  module.exports = traverse;
+}

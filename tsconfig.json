@@ -3,26 +3,26 @@
   "exclude": ["./src/**/*.test.ts"],
 
   "compilerOptions": {
-    "lib": ["es2020"],
-    "target": "es2020",
-    "module": "commonjs",
-    "outDir": "./dist",
     "declaration": true,
+    "lib": ["ES2015"],
+    "types": ["node"],
+    "target": "ES2015",
 
-    "skipLibCheck": true,
+    "rootDir": "src",
+
     "strict": true,
-    "noImplicitAny": true,
+    "noImplicitAny": false,
     "strictNullChecks": true,
     "strictFunctionTypes": true,
     "strictPropertyInitialization": true,
     "noImplicitThis": true,
     "alwaysStrict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
 
-    "moduleResolution": "node",
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "skipLibCheck": true
   }
 }

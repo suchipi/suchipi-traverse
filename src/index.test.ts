@@ -186,6 +186,8 @@ test("before with stop", () => {
       if (path[path.length - 1] === "left") {
         return traverse.stop;
       }
+
+      return undefined;
     },
   });
 
